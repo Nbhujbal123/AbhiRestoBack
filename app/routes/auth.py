@@ -345,6 +345,118 @@ def forgot_password_reset():
         return error_response(f'Password reset failed: {str(e)}', 500)
 
 
+@auth_bp.route('/login/send-otp', methods=['POST'])
+def login_send_otp():
+    """Step 1 of OTP login: validate credentials and send OTP to email."""
+    data = request.get_json(silent=True) or {}
+    email = data.get('email', '').strip().lower()
+    password = data.get('password', '')
+
+    if not email or not password:
+        return error_response('Email and password are required', 400)
+
+    if not validate_email(email):
+        return error_response('Invalid email format', 400)
+
+    try:
+        user = User.query.filter_by(email=email).first()
+    except OperationalError:
+        db.session.rollback()
+        return error_response('Database connection lost. Please try again in a moment.', 503)
+
+    if not user or not bcrypt.check_password_hash(user.password_hash, password):
+        return error_response('Invalid email or password', 401)
+
+    if not user.is_active:
+        return error_response('Account is deactivated', 403)
+
+    otp_code = ''.join(random.choices(string.digits, k=6))
+    expires_at = datetime.utcnow() + timedelta(minutes=5)
+
+    new_otp = EmailOTP(email=email, otp_code=otp_code, expires_at=expires_at)
+
+    try:
+        db.session.add(new_otp)
+        db.session.commit()
+
+        try:
+            send_otp_email(
+                email,
+                "Your RestoM Login OTP",
+                f"Your login OTP is: {otp_code}\n\nThis code will expire in 5 minutes.\n\nIf you didn't request this, please ignore this email."
+            )
+        except smtplib.SMTPAuthenticationError as e:
+            db.session.delete(new_otp)
+            db.session.commit()
+            print(f"Gmail rejected SMTP credentials for login OTP to {email}: {e}")
+            return error_response('Unable to send OTP. Please check email configuration.', 502)
+        except Exception as e:
+            db.session.delete(new_otp)
+            db.session.commit()
+            print(f"Error sending login OTP to {email}: {e}")
+            return error_response('Unable to send OTP email. Please try again.', 502)
+
+        return success_response('OTP sent to your email', {
+            'email': email,
+            'expires_in': '5 minutes'
+        }, 200)
+
+    except OperationalError:
+        db.session.rollback()
+        return error_response('Database connection lost. Please try again in a moment.', 503)
+    except Exception as e:
+        db.session.rollback()
+        return error_response(f'Failed to send OTP: {str(e)}', 500)
+
+
+@auth_bp.route('/login/verify-otp', methods=['POST'])
+def login_verify_otp():
+    """Step 2 of OTP login: verify OTP and return JWT tokens."""
+    data = request.get_json(silent=True) or {}
+    email = data.get('email', '').strip().lower()
+    otp = data.get('otp', '').strip()
+
+    if not email or not otp:
+        return error_response('Email and OTP are required', 400)
+
+    try:
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return error_response('User not found', 404)
+
+        otp_record = EmailOTP.query.filter_by(
+            email=email,
+            otp_code=otp,
+            is_used=False
+        ).order_by(EmailOTP.created_at.desc()).first()
+    except OperationalError:
+        db.session.rollback()
+        return error_response('Database connection lost. Please try again in a moment.', 503)
+
+    if not otp_record:
+        return error_response('Invalid OTP', 400)
+
+    if datetime.utcnow() > otp_record.expires_at:
+        return error_response('OTP has expired', 400)
+
+    otp_record.is_used = True
+
+    try:
+        db.session.commit()
+
+        access_token = create_access_token(identity=str(user.id))
+        refresh_token = create_refresh_token(identity=str(user.id))
+
+        return success_response('Login successful', {
+            'user': user.to_dict(),
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, 200)
+    except Exception as e:
+        db.session.rollback()
+        return error_response(f'Login failed: {str(e)}', 500)
+
+
 # Also keep the original register and login endpoints for compatibility
 @auth_bp.route('/register', methods=['POST'])
 @auth_bp.route('/signup', methods=['POST'])
