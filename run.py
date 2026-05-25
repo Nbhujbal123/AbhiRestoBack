@@ -3,7 +3,7 @@ from app import create_app, db
 from app.models import User, Category
 from app.extensions import bcrypt
 
-app = create_app(os.environ.get('FLASK_ENV', 'development'))
+app = create_app(os.environ.get('FLASK_ENV', 'production'))
 
 
 def init_db():
