@@ -65,6 +65,14 @@ def create_app(config_name=None):
     def serve_upload(filename):
         return send_from_directory(app.config.get('UPLOAD_FOLDER', 'uploads'), filename)
     
+    # Home route
+    @app.route('/')
+    def home():
+        return {
+            "success": True,
+            "message": "Resto backend API is running successfully"
+        }, 200
+
     # Health check endpoint
     @app.route('/api/health')
     def health_check():
