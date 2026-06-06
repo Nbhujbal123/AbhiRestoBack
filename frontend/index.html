@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | RestoM Premium</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <link rel="stylesheet" href="css/login.css" />
+  </head>
+  <body>   
+    <div class="login-card fade-in" id="authCard">
+      <a href="home.html">
+        <img src="assets/logo2.png" alt="RestoM" class="login-logo" />
+      </a>
+
+      <div id="authContent">
+        <!-- Login View -->
+        <div id="loginView">
+          <div class="welcome-head">
+            <h2>Welcome Back</h2>
+            <p>Sign in to continue your premium dining experience</p>
+          </div>
+
+          <form id="loginForm">
+            <div id="loginStep1">
+              <div class="input-group-premium">
+                <i class="bi bi-person"></i>
+                <input
+                  type="text"
+                  id="loginName"
+                  placeholder="Full Name"
+                  required
+                />
+              </div>
+              <div class="input-group-premium">
+                <i class="bi bi-telephone"></i>
+                <input
+                  type="tel"
+                  id="loginMobile"
+                  placeholder="Mobile Number"
+                  maxlength="10"
+                  inputmode="numeric"
+                  pattern="\d{10}"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn-login-premium">Sign In</button>
+            </div>
+          </form>
+
+          <div class="signup-text">
+            New customers can sign in directly with their name and mobile number.
+          </div>
+        </div>
+
+        <!-- Register View -->
+        <div id="registerView" style="display: none">
+          <div class="welcome-head">
+            <h2>Create Account</h2>
+            <p>Join us for a premium dining experience</p>
+          </div>
+
+          <form id="registerForm" data-inline-handler="1">
+            <div class="input-group-premium">
+              <i class="bi bi-person"></i>
+              <input
+                type="text"
+                id="registerName"
+                placeholder="Full Name"
+                required
+              />
+            </div>
+            <div class="input-group-premium">
+              <i class="bi bi-envelope"></i>
+              <input
+                type="email"
+                id="registerEmail"
+                placeholder="Email Address"
+                required
+              />
+            </div>
+            <div class="input-group-premium">
+              <i class="bi bi-telephone"></i>
+              <input
+                type="tel"
+                id="registerMobile"
+                placeholder="Phone Number"
+                maxlength="10"
+                inputmode="numeric"
+                pattern="\d{10}"
+                required
+              />
+            </div>
+            <div class="input-group-premium">
+              <i class="bi bi-shield-lock"></i>
+              <input
+                type="password"
+                id="registerPassword"
+                placeholder="New Password"
+                required
+              />
+              <i
+                class="bi bi-eye toggle-password"
+                onclick="togglePass('registerPassword', this)"
+              ></i>
+            </div>
+            <div class="input-group-premium">
+              <i class="bi bi-shield-check"></i>
+              <input
+                type="password"
+                id="registerConfirmPassword"
+                placeholder="Confirm Password"
+                required
+              />
+              <i
+                class="bi bi-eye toggle-password"
+                onclick="togglePass('registerConfirmPassword', this)"
+              ></i>
+            </div>
+            <button type="submit" class="btn-login-premium">
+              Create Account
+            </button>
+          </form>
+
+          <div class="signup-text">
+            Already have an account? <a onclick="showLogin()">Sign In</a>
+          </div>
+        </div>
+
+        <!-- Admin Login View -->
+        <div id="adminLoginView" style="display: none">
+          <div class="welcome-head">
+            <h2>Admin Login</h2>
+            <p>Sign in to manage RestoM operations</p>
+          </div>
+
+          <form id="adminLoginForm">
+            <div class="input-group-premium">
+              <i class="bi bi-envelope"></i>
+              <input
+                type="email"
+                id="adminLoginEmail"
+                placeholder="Admin Email"
+                required
+              />
+            </div>
+            <div class="input-group-premium">
+              <i class="bi bi-lock"></i>
+              <input
+                type="password"
+                id="adminLoginPassword"
+                placeholder="Password"
+                required
+              />
+              <i
+                class="bi bi-eye toggle-password"
+                onclick="togglePass('adminLoginPassword', this)"
+              ></i>
+            </div>
+            <button type="submit" class="btn-login-premium">Admin Sign In</button>
+          </form>
+
+          <div class="signup-text">
+            Customer login? <a onclick="showLogin()">Sign In</a>
+          </div>
+        </div>
+
+        <!-- Forgot Password View -->
+        <div id="forgotView" style="display: none">
+          <div class="welcome-head">
+            <h2>Forgot Password</h2>
+            <p>Reset your password with email OTP verification</p>
+          </div>
+
+          <form id="forgotForm">
+            <div class="input-group-premium">
+              <i class="bi bi-envelope"></i>
+              <input
+                type="email"
+                id="forgotEmail"
+                placeholder="Email Address"
+                required
+              />
+              <a
+                href="javascript:void(0)"
+                class="verify-link"
+                id="forgotVerifyLink"
+                onclick="sendForgotOTP()"
+                >Send OTP</a
+              >
+            </div>
+
+            <div id="forgotResetSection" style="display: none">
+              <div class="input-group-premium">
+                <i class="bi bi-shield-lock"></i>
+                <input
+                  type="text"
+                  id="forgotOtp"
+                  placeholder="Enter 6-digit OTP"
+                  maxlength="6"
+                  required
+                />
+              </div>
+              <div class="input-group-premium">
+                <i class="bi bi-lock"></i>
+                <input
+                  type="password"
+                  id="forgotNewPassword"
+                  placeholder="New Password"
+                  required
+                />
+                <i
+                  class="bi bi-eye toggle-password"
+                  onclick="togglePass('forgotNewPassword', this)"
+                ></i>
+              </div>
+              <div class="input-group-premium">
+                <i class="bi bi-lock-fill"></i>
+                <input
+                  type="password"
+                  id="forgotConfirmPassword"
+                  placeholder="Confirm Password"
+                  required
+                />
+                <i
+                  class="bi bi-eye toggle-password"
+                  onclick="togglePass('forgotConfirmPassword', this)"
+                ></i>
+              </div>
+              <button type="submit" class="btn-login-premium">
+                Reset Password
+              </button>
+            </div>
+          </form>
+
+          <div class="signup-text">
+            Back to login? <a onclick="showLoginFromForgot()">Sign In</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-copy">
+        &copy; 2026 RestoM Premium
+        <span style="margin: 0 0.4rem; color: #b8a27a">|</span>
+        <a
+          href="javascript:void(0)"
+          onclick="showAdminLogin()"
+          style="color: #b8832f; text-decoration: none; font-weight: 600"
+          >Admin Login</a
+        >
+      </div>
+    </div>
+
+    <script src="js/api.js?v=direct-login-1"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/login-page.js?v=direct-login-1"></script>
+    <script>
+      async function postJson(url, payload) {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        let data = {};
+        try {
+          data = await response.json();
+        } catch (_) {
+          data = {};
+        }
+
+        return { response, data };
+      }
+
+      function togglePass(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        const isPassword = input.type === "password";
+        input.type = isPassword ? "text" : "password";
+        icon.classList.toggle("bi-eye", !isPassword);
+        icon.classList.toggle("bi-eye-slash", isPassword);
+      }
+
+      function showRegister() {
+        document.getElementById("loginView").style.display = "none";
+        document.getElementById("forgotView").style.display = "none";
+        document.getElementById("adminLoginView").style.display = "none";
+        document.getElementById("registerView").style.display = "block";
+      }
+
+      function showLogin() {
+        document.getElementById("registerView").style.display = "none";
+        document.getElementById("forgotView").style.display = "none";
+        document.getElementById("adminLoginView").style.display = "none";
+        document.getElementById("loginView").style.display = "block";
+        document.getElementById("registerForm").reset();
+      }
+
+      function showForgotPassword() {
+        document.getElementById("loginView").style.display = "none";
+        document.getElementById("registerView").style.display = "none";
+        document.getElementById("adminLoginView").style.display = "none";
+        document.getElementById("forgotView").style.display = "block";
+      }
+
+      function showAdminLogin() {
+        document.getElementById("loginView").style.display = "none";
+        document.getElementById("registerView").style.display = "none";
+        document.getElementById("forgotView").style.display = "none";
+        document.getElementById("adminLoginView").style.display = "block";
+      }
+
+      function showLoginFromForgot() {
+        document.getElementById("forgotView").style.display = "none";
+        document.getElementById("adminLoginView").style.display = "none";
+        document.getElementById("loginView").style.display = "block";
+        document.getElementById("forgotResetSection").style.display = "none";
+        document.getElementById("forgotVerifyLink").style.display = "inline";
+        document.getElementById("forgotForm").reset();
+      }
+
+      ["registerMobile", "loginMobile"].forEach((id) => {
+        const input = document.getElementById(id);
+        if (input) {
+          input.addEventListener("input", () => {
+            input.value = input.value.replace(/\D/g, "").slice(0, 10);
+          });
+        }
+      });
+
+      async function sendForgotOTP() {
+        const email = document.getElementById("forgotEmail").value.trim();
+        const forgotVerifyLink = document.getElementById("forgotVerifyLink");
+
+        if (!email || !email.includes("@") || !email.includes(".")) {
+          alert("Please enter a valid email address");
+          return;
+        }
+
+        // Show loading state
+        const originalText = forgotVerifyLink.textContent;
+        forgotVerifyLink.textContent = "Sending...";
+        forgotVerifyLink.style.pointerEvents = "none";
+        forgotVerifyLink.style.opacity = "0.6";
+
+        try {
+          const { response, data } = await postJson(
+            `${API_BASE_URL}/auth/forgot-password/send-otp`,
+            { email },
+          );
+
+          if (response.ok && data.success) {
+            document.getElementById("forgotResetSection").style.display = "block";
+            forgotVerifyLink.style.display = "none";
+            alert("OTP sent to your email! Check your inbox.");
+            return;
+          }
+
+          alert(data.message || "Failed to send OTP");
+        } catch (error) {
+          console.error("Error:", error);
+          alert(error?.message || "Failed to send OTP. Please try again.");
+        } finally {
+          if (forgotVerifyLink.style.display !== "none") {
+            forgotVerifyLink.textContent = originalText;
+            forgotVerifyLink.style.pointerEvents = "";
+            forgotVerifyLink.style.opacity = "";
+          }
+        }
+      }
+
+      // Handle form submission
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("registerName").value.trim();
+          const email = document.getElementById("registerEmail").value.trim();
+          const phone = document
+            .getElementById("registerMobile")
+            .value.replace(/\D/g, "");
+          const password = document.getElementById("registerPassword").value;
+          const confirmPassword = document.getElementById(
+            "registerConfirmPassword",
+          ).value;
+
+          if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return;
+          }
+
+          if (!/^\d{10}$/.test(phone)) {
+            alert("Mobile number must be exactly 10 digits");
+            return;
+          }
+
+          const nameParts = name.split(/\s+/);
+          const firstName = nameParts.shift() || name;
+          const lastName = nameParts.join(" ");
+
+          postJson(`${API_BASE_URL}/auth/create-account`, {
+            email: email,
+            phone: phone,
+            first_name: firstName,
+            last_name: lastName,
+            password: password,
+            confirm_password: confirmPassword,
+          })
+            .then(({ response, data }) => {
+              if (response.ok && data.success) {
+                if (data.data?.access_token && typeof auth !== "undefined") {
+                  auth.setSession(
+                    data.data.user,
+                    data.data.access_token,
+                    data.data.refresh_token,
+                  );
+                  window.location.href = "home.html";
+                  return;
+                }
+
+                alert("Account created successfully! Please sign in.");
+                showLogin();
+                document.getElementById("loginName").value = name;
+                document.getElementById("loginMobile").value = phone;
+              } else {
+                alert(data.message || "Failed to create account");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert(
+                error?.message || "Failed to create account. Please try again.",
+              );
+            });
+        });
+
+      document
+        .getElementById("adminLoginForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const email = document.getElementById("adminLoginEmail").value.trim();
+          const password = document.getElementById("adminLoginPassword").value;
+
+          try {
+            const data = await auth.login({ email, password });
+            const user = data.data?.user;
+
+            if (!user || user.role !== "admin") {
+              auth.logout();
+              alert("Please use an admin account");
+              return;
+            }
+
+            window.location.href = "admin-dashboard.html";
+          } catch (error) {
+            alert(error.message || "Admin login failed. Please try again.");
+          }
+        });
+
+      document
+        .getElementById("forgotForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const email = document.getElementById("forgotEmail").value.trim();
+          const otp = document.getElementById("forgotOtp").value.trim();
+          const newPassword =
+            document.getElementById("forgotNewPassword").value;
+          const confirmPassword = document.getElementById(
+            "forgotConfirmPassword",
+          ).value;
+
+          if (newPassword !== confirmPassword) {
+            alert("Passwords do not match");
+            return;
+          }
+
+          try {
+            const { response, data } = await postJson(
+              `${API_BASE_URL}/auth/forgot-password/reset`,
+              {
+                email,
+                otp,
+                new_password: newPassword,
+                confirm_password: confirmPassword,
+              },
+            );
+
+            if (response.ok && data.success) {
+              alert("Password reset successful! Please sign in.");
+              showLoginFromForgot();
+              return;
+            }
+
+            alert(data.message || "Failed to reset password");
+          } catch (error) {
+            console.error("Error:", error);
+            alert(
+              error?.message || "Failed to reset password. Please try again.",
+            );
+          }
+        });
+    </script>
+  </body>
+</html>
