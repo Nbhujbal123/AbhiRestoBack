@@ -91,11 +91,12 @@ function renderMenu(items) {
   grid.innerHTML = items
     .map((item, index) => {
       const delay = index * 0.1;
+      const imageUrl = resolveImageUrl(item.image) || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600";
       return `
       <div class="col-md-6 col-lg-4 menu-item" data-category="${item.category || "Others"}" data-type="${item.food_type || "veg"}" data-name="${item.name || "Item"}" style="animation-delay: ${delay}s;">
         <div class="menu-card">
           <div class="menu-card-image">
-            <img src="${item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600"}" alt="${item.name || "Item"}" />
+            <img src="${imageUrl}" alt="${item.name || "Item"}" />
           </div>
           <div class="menu-card-body">
             <h5 class="menu-card-title">${item.name || "Item"}</h5>
