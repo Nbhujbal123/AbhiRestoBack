@@ -1,3 +1,6 @@
+import pymysql
+pymysql.install_as_MySQLdb()
+
 import os
 from flask import Flask, send_from_directory
 from app.config import config
